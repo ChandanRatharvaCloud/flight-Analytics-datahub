@@ -1,0 +1,28 @@
+{
+	"name": "ls_SqlServer1_OnPrem",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"parameters": {
+			"ServerName": {
+				"type": "String"
+			},
+			"DBName": {
+				"type": "String"
+			},
+			"DBUserName": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"connectionString": "integrated security=True;data source=@{linkedService().ServerName};initial catalog=@{linkedService().DBName}",
+			"userName": "@{linkedService().DBUserName}",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI5NzYxMTZkZS1lMzM2LTQ2MzEtYTE1NS0yYzIzNWFhMmY1NzIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "SelfHosted-IntegrationRuntime1",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
