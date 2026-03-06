@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT SourceSchemaName\n\t,SourceTableName\n\t,SourceQuery + CASE \n\t\tWHEN LastWatermarkValue IS NULL\n\t\t\tAND WatermarkDataType = 'DATETIME'\n\t\t\tTHEN '01/01/1900'\n\t\tWHEN LastWatermarkValue IS NULL\n\t\t\tAND WatermarkDataType = 'INT'\n\t\t\tTHEN '0'\n\t\tWHEN LastWatermarkValue IS NULL\n\t\t\tAND WatermarkDataType = 'N/A'\n\t\t\tTHEN ''\n\t\tELSE LastWatermarkValue\n\t\tEND AS SourceQuery,\n\t\tSourceName\nFROM [IncrementalLoadMetadata];",
+						"sqlReaderQuery": "SELECT SourceSchemaName\n\t,SourceTableName\n\t,SourceQuery + CASE \n\t\tWHEN LastWatermarkValue IS NULL\n\t\t\tAND WatermarkDataType = 'DATETIME'\n\t\t\tTHEN '01/01/1900'\n\t\tWHEN LastWatermarkValue IS NULL\n\t\t\tAND WatermarkDataType = 'INT'\n\t\t\tTHEN '0'\n\t\tWHEN LastWatermarkValue IS NULL\n\t\t\tAND WatermarkDataType = 'N/A'\n\t\t\tTHEN ''\n\t\tELSE LastWatermarkValue\n\t\tEND AS SourceQuery,\n\t\tSourceName\nFROM [IncrementalLoadMetadata] where IsActive = 'True'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -30,6 +30,54 @@
 						}
 					},
 					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Copy data1').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "SqlServerTable1",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
 				}
 			}
 		],
