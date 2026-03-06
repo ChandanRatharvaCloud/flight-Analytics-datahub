@@ -116,7 +116,17 @@
 							"outputs": [
 								{
 									"referenceName": "ds_dynamic_source_landing",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"Directory": {
+											"value": "@concat('landing-zone/',item().SourceName,'/tmpcsv/')",
+											"type": "Expression"
+										},
+										"FileName": {
+											"value": "@concat(item().SourceTableName,'.csv')",
+											"type": "Expression"
+										}
+									}
 								}
 							]
 						}
