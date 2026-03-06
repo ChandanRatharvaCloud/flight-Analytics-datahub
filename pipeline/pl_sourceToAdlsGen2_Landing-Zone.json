@@ -146,7 +146,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": "SELECT \r\n    (SELECT MAX(flight_id) FROM dbo.flights_raw) AS Maxflights_raw,\r\n    (SELECT MAX(booking_id) FROM dbo.bookings_raw) AS Maxbooking_raw;",
+						"sqlReaderQuery": "SELECT \r\n(SELECT MAX(CAST(SUBSTRING(flight_id,2,LEN(flight_id)) AS INT)) \r\n FROM dbo.flights_raw) AS Maxflights_raw,\r\n\r\n(SELECT MAX(CAST(SUBSTRING(booking_id,2,LEN(booking_id)) AS INT)) \r\n FROM dbo.bookings_raw) AS Maxbooking_raw;",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
