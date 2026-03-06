@@ -17,13 +17,19 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT SourceSchemaName\n\t,SourceTableName\n\t,SourceQuery + CASE \n\t\tWHEN LastWatermarkValue IS NULL\n\t\t\tAND WatermarkDataType = 'DATETIME'\n\t\t\tTHEN '01/01/1900'\n\t\tWHEN LastWatermarkValue IS NULL\n\t\t\tAND WatermarkDataType = 'INT'\n\t\t\tTHEN '0'\n\t\tWHEN LastWatermarkValue IS NULL\n\t\t\tAND WatermarkDataType = 'N/A'\n\t\t\tTHEN ''\n\t\tELSE LastWatermarkValue\n\t\tEND AS SourceQuery,\n\t\tSourceName\nFROM [IncrementalLoadMetadata];",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
 					"dataset": {
 						"referenceName": "AzureSqlTable1",
-						"type": "DatasetReference"
-					}
+						"type": "DatasetReference",
+						"parameters": {
+							"SchemaName": "dbo",
+							"TableName": "IncrementalLoadMetadata"
+						}
+					},
+					"firstRowOnly": false
 				}
 			}
 		],
