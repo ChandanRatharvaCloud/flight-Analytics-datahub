@@ -1,0 +1,17 @@
+{
+	"name": "SqlServerTable1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_SqlServer1_OnPrem",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ServerName": "DESKTOP-P24AOKF\\SQLEXPRESS01",
+				"DBName": "db_flight_march_03_2026",
+				"DBUserName": "ChandanS"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	}
+}
