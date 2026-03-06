@@ -125,7 +125,7 @@
 				}
 			},
 			{
-				"name": "Lookup2",
+				"name": "Get Max Date",
 				"type": "Lookup",
 				"dependsOn": [
 					{
@@ -146,7 +146,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": "SELECT \r\n(SELECT MAX(CAST(SUBSTRING(flight_id,2,LEN(flight_id)) AS INT)) \r\n FROM dbo.flights_raw) AS Maxflights_raw,\r\n\r\n(SELECT MAX(CAST(SUBSTRING(booking_id,2,LEN(booking_id)) AS INT)) \r\n FROM dbo.bookings_raw) AS Maxbooking_raw;",
+						"sqlReaderQuery": "SELECT \r\n(\r\nSELECT 'F' + CAST(MAX(CAST(REPLACE(flight_id,'F','') AS INT)) AS VARCHAR)\r\nFROM dbo.flights_raw\r\n) AS MaxFlights_id;\r\n\r\nSELECT \r\n(\r\nSELECT 'F' + CAST(MAX(CAST(REPLACE(flight_id,'F','') AS INT)) AS VARCHAR)\r\nFROM dbo.bookings_raw\r\n) AS MaxBookings_id;",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -167,7 +167,7 @@
 				"type": "SynapseNotebook",
 				"dependsOn": [
 					{
-						"activity": "Lookup2",
+						"activity": "Get Max Date",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -186,7 +186,49 @@
 						"referenceName": "ConverstingJsonToParquet",
 						"type": "NotebookReference"
 					},
-					"snapshot": true
+					"snapshot": true,
+					"conf": {
+						"spark.dynamicAllocation.enabled": null,
+						"spark.dynamicAllocation.minExecutors": null,
+						"spark.dynamicAllocation.maxExecutors": null
+					},
+					"numExecutors": null
+				}
+			},
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "ConvetJsonToParquet",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ls_azure_SQL_DB",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "UPDATE [dbo].[IncrementalLoadMetadata] set LastWatermarkValue='@{activity('Get Max Date').output.firstRow.MaxFlights_id}'\nwhere [SourceName] = 'OnPremSQLServer' and SourceTableName = 'flights_raw';\n\nUPDATE [dbo].[IncrementalLoadMetadata] set LastWatermarkValue='@{activity('Get Max Date').output.firstRow.MaxBookings_id}'\nwhere [SourceName] = 'OnPremSQLServer' and SourceTableName = 'bookings_raw';",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
 				}
 			}
 		],
