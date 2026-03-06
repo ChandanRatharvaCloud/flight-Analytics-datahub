@@ -1,0 +1,21 @@
+{
+	"name": "ds_dynamic_source_landing",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_AdlGen2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
