@@ -38,7 +38,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT  * FROM [dbo].[notebookExecutionConfig] where flag = 1 and source = 'OnPremSQLServer' and layer = 'P'",
+						"sqlReaderQuery": "SELECT  * FROM [dbo].[notebookExecutionConfig] where flag = 'True' and source = 'OnPremSQLServer' and layer = 'P'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -54,7 +54,7 @@
 				}
 			},
 			{
-				"name": "ForEach1",
+				"name": "Run_PreIntigration_Parellel_NB",
 				"type": "ForEach",
 				"dependsOn": [
 					{
@@ -150,9 +150,11 @@
 			{
 				"name": "Get List Of Stage Tables",
 				"type": "Lookup",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
-						"activity": "ForEach1",
+						"activity": "Run_PreIntigration_Parellel_NB",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -187,6 +189,8 @@
 			{
 				"name": "STAGE TABLE CREATION",
 				"type": "ForEach",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Get List Of Stage Tables",
