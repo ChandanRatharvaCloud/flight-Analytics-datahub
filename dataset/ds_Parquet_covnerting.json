@@ -1,0 +1,20 @@
+{
+	"name": "ds_Parquet_covnerting",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_AdlGen2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "staging/OnPremSQLServer/parquet",
+				"fileSystem": "adlsgen2"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}

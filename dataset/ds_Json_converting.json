@@ -1,0 +1,44 @@
+{
+	"name": "ds_Json_converting",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_AdlGen2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "staging/OnPremSQLServer/tempjson",
+				"fileSystem": "adlsgen2"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"booking_id": {
+					"type": "string"
+				},
+				"passenger_id": {
+					"type": "string"
+				},
+				"flight_id": {
+					"type": "string"
+				},
+				"booking_date": {
+					"type": "string"
+				},
+				"fare_amount": {
+					"type": "string"
+				},
+				"seat_no": {
+					"type": "string"
+				},
+				"channel": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}

@@ -5,6 +5,8 @@
 			{
 				"name": "GetMetadata",
 				"type": "Lookup",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -36,6 +38,8 @@
 				"name": "ForEach1",
 				"description": "LoadingData",
 				"type": "ForEach",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "GetMetadata",
@@ -128,6 +132,8 @@
 			{
 				"name": "Get Max Date",
 				"type": "Lookup",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "ForEach1",
@@ -197,9 +203,17 @@
 			{
 				"name": "Script1",
 				"type": "Script",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "ConvetJsonToParquet",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Copy data2",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -233,6 +247,8 @@
 			{
 				"name": "Delete1",
 				"type": "Delete",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Script1",
@@ -254,7 +270,7 @@
 						"referenceName": "Json1",
 						"type": "DatasetReference",
 						"parameters": {
-							"Directory": "\"staging/OnPremSQLServer/tempjson/\"",
+							"Directory": "staging/OnPremSQLServer/tempjson/",
 							"FileName": {
 								"value": ".json",
 								"type": "Expression"
@@ -275,6 +291,65 @@
 						"enablePartitionDiscovery": false
 					}
 				}
+			},
+			{
+				"name": "Copy data2",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "Get Max Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": "staging/OnPremSQLServer/tempjson",
+							"wildcardFileName": "*.json",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_Json_converting",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_Parquet_covnerting",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"annotations": []
