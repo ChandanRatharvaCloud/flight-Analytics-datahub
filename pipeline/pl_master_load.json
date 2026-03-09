@@ -102,25 +102,55 @@
 							}
 						},
 						{
-							"name": "Set variable1",
+							"name": "PreIntigration_Parellel_Error",
 							"type": "SetVariable",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "Pre Intigration Notebook",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
 							"policy": {
 								"secureOutput": false,
 								"secureInput": false
 							},
-							"userProperties": []
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Var_PreIntigration",
+								"value": {
+									"value": "@concat('item: ',string(item()), '-Error: ',activity('GetPreintigration').error.message)",
+									"type": "Expression"
+								}
+							}
 						},
 						{
-							"name": "Fail1",
+							"name": "Fail_PreIntigration",
 							"type": "Fail",
-							"dependsOn": [],
-							"userProperties": []
+							"dependsOn": [
+								{
+									"activity": "PreIntigration_Parellel_Error",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"message": "PipeLineFailed-PreIntigration",
+								"errorCode": "400"
+							}
 						}
 					]
 				}
 			}
 		],
+		"variables": {
+			"Var_PreIntigration": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }
