@@ -181,6 +181,26 @@
 					},
 					"firstRowOnly": false
 				}
+			},
+			{
+				"name": "STAGE TABLE CREATION",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get List Of Stage Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get List Of Stage Tables').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true
+				}
 			}
 		],
 		"variables": {
