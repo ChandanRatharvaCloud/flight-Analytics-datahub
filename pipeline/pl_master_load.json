@@ -163,7 +163,24 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT  * FROM [dbo].[MergeConfig] where Active =1 and islink_Table = 0",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference",
+						"parameters": {
+							"SchemaName": "dbo",
+							"TableName": "MergeConfig"
+						}
+					},
+					"firstRowOnly": false
+				}
 			}
 		],
 		"variables": {
