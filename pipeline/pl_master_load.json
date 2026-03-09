@@ -199,12 +199,87 @@
 						"value": "@activity('Get List Of Stage Tables').output.value",
 						"type": "Expression"
 					},
-					"isSequential": true
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Script1",
+							"type": "Script",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "ls_azure_SQL_DB",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "@item().SourceTableDDL",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						},
+						{
+							"name": "Set variable1",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Script1",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "varerror_stg",
+								"value": {
+									"value": "@concat('item: ',string(item()),' - Error: ',activity('Script1').error.message)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "PipelineFailed",
+							"type": "Fail",
+							"dependsOn": [
+								{
+									"activity": "Set variable1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"message": "PiplineFailed",
+								"errorCode": "400"
+							}
+						}
+					]
 				}
 			}
 		],
 		"variables": {
 			"Var_PreIntigration": {
+				"type": "String"
+			},
+			"varerror_stg": {
 				"type": "String"
 			}
 		},
