@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "181017c3-eae8-4163-a3f1-f5dd61ee166c"
+				"spark.autotune.trackingId": "05711856-b36b-4054-99a1-f3c111377e77"
 			}
 		},
 		"metadata": {
@@ -114,10 +114,20 @@
 				]
 			},
 			{
-				"cell_type": "code",
+				"cell_type": "markdown",
 				"metadata": {
-					"collapsed": false
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
 				},
+				"source": [
+					""
+				]
+			},
+			{
+				"cell_type": "code",
 				"source": [
 					"from pyspark.sql.functions import *\n",
 					"from pyspark.sql.types import *\n",
@@ -136,64 +146,71 @@
 			{
 				"cell_type": "code",
 				"source": [
-					"from pyspark.sql.functions import col, coalesce, to_timestamp\n",
+					"from pyspark.sql.functions import col, coalesce, to_timestamp, when, trim, lower, current_timestamp, lit\n",
 					"\n",
-					"df_clean = df.withColumn(\n",
-					"    \"departure_time\",\n",
-					"    coalesce(\n",
-					"        to_timestamp(col(\"departure_time\"), \"dd-MM-yy hh:mma\"),\n",
-					"        to_timestamp(col(\"departure_time\"), \"dd-MM-yy HH:mm\"),\n",
-					"        to_timestamp(col(\"departure_time\"), \"dd-MM-yyyy HH:mm\"),\n",
-					"        to_timestamp(col(\"departure_time\"), \"d MMM yy HH:mm\"),\n",
-					"        to_timestamp(col(\"departure_time\"), \"dd MMM yy HH:mm\"),\n",
-					"        to_timestamp(col(\"departure_time\"), \"dd/MM/yyyy HH:mm\")\n",
-					"    )\n",
-					")\n",
-					"\n",
-					"df_clean = df_clean.withColumn(\n",
-					"    \"arrival_time\",\n",
-					"    coalesce(\n",
-					"        to_timestamp(col(\"arrival_time\"), \"dd-MM-yy hh:mma\"),\n",
-					"        to_timestamp(col(\"arrival_time\"), \"dd-MM-yy HH:mm\"),\n",
-					"        to_timestamp(col(\"arrival_time\"), \"dd-MM-yyyy HH:mm\"),\n",
-					"        to_timestamp(col(\"arrival_time\"), \"d MMM yy HH:mm\"),\n",
-					"        to_timestamp(col(\"arrival_time\"), \"dd MMM yy HH:mm\"),\n",
-					"        to_timestamp(col(\"arrival_time\"), \"dd/MM/yyyy HH:mm\")\n",
-					"    )\n",
-					")"
-				],
-				"execution_count": 40
-			},
-			{
-				"cell_type": "code",
-				"source": [
-					"from pyspark.sql.functions import col, when, trim, lower, to_timestamp, current_timestamp\n",
+					"# Fix Spark datetime parsing and writing issues\n",
+					"spark.conf.set(\"spark.sql.legacy.timeParserPolicy\",\"LEGACY\")\n",
+					"spark.conf.set(\"spark.sql.parquet.int96RebaseModeInWrite\",\"LEGACY\")\n",
+					"spark.conf.set(\"spark.sql.parquet.datetimeRebaseModeInWrite\",\"LEGACY\")\n",
 					"\n",
 					"# Paths\n",
 					"silver_path = f\"abfss://{container}@{storage_account}.dfs.core.windows.net/preintegration/flights\"\n",
 					"bronze_error_path = f\"abfss://{container}@{storage_account}.dfs.core.windows.net/bronze_error/flights\"\n",
 					"\n",
-					"# Convert datetime format for validation\n",
-					"df_checked = df_clean \\\n",
-					".withColumn(\"departure_ts\", to_timestamp(col(\"departure_time\"), \"yyyy-MM-dd HH:mm:ss\")) \\\n",
-					".withColumn(\"arrival_ts\", to_timestamp(col(\"arrival_time\"), \"yyyy-MM-dd HH:mm:ss\"))\n",
+					"# Convert to string\n",
+					"df = df.withColumn(\"departure_time\", col(\"departure_time\").cast(\"string\")) \\\n",
+					"       .withColumn(\"arrival_time\", col(\"arrival_time\").cast(\"string\"))\n",
 					"\n",
-					"# Add validation logic\n",
-					"df_with_error = df_checked.withColumn(\n",
+					"# Parse datetime formats\n",
+					"df_clean = df \\\n",
+					".withColumn(\n",
+					"    \"departure_ts\",\n",
+					"    coalesce(\n",
+					"        to_timestamp(col(\"departure_time\"), \"dd-MM-yyyy HH:mm\"),\n",
+					"        to_timestamp(col(\"departure_time\"), \"dd-MM-yy HH:mm\"),\n",
+					"        to_timestamp(col(\"departure_time\"), \"dd-MM-yy hh:mma\"),\n",
+					"        to_timestamp(col(\"departure_time\"), \"d MMM yy HH:mm\"),\n",
+					"        to_timestamp(col(\"departure_time\"), \"dd MMM yy HH:mm\"),\n",
+					"        to_timestamp(col(\"departure_time\"), \"dd/MM/yyyy HH:mm\")\n",
+					"    )\n",
+					") \\\n",
+					".withColumn(\n",
+					"    \"arrival_ts\",\n",
+					"    coalesce(\n",
+					"        to_timestamp(col(\"arrival_time\"), \"dd-MM-yyyy HH:mm\"),\n",
+					"        to_timestamp(col(\"arrival_time\"), \"dd-MM-yy HH:mm\"),\n",
+					"        to_timestamp(col(\"arrival_time\"), \"dd-MM-yy hh:mma\"),\n",
+					"        to_timestamp(col(\"arrival_time\"), \"d MMM yy HH:mm\"),\n",
+					"        to_timestamp(col(\"arrival_time\"), \"dd MMM yy HH:mm\"),\n",
+					"        to_timestamp(col(\"arrival_time\"), \"dd/MM/yyyy HH:mm\")\n",
+					"    )\n",
+					")\n",
+					"\n",
+					"# Remove ancient timestamps (before 1900)\n",
+					"df_clean = df_clean.withColumn(\n",
+					"    \"departure_ts\",\n",
+					"    when(col(\"departure_ts\") < lit(\"1900-01-01\"), None).otherwise(col(\"departure_ts\"))\n",
+					").withColumn(\n",
+					"    \"arrival_ts\",\n",
+					"    when(col(\"arrival_ts\") < lit(\"1900-01-01\"), None).otherwise(col(\"arrival_ts\"))\n",
+					")\n",
+					"\n",
+					"# Validation\n",
+					"df_with_error = df_clean.withColumn(\n",
 					"    \"error_reason\",\n",
-					"    \n",
+					"\n",
 					"    when(col(\"flight_id\").isNull() | (trim(col(\"flight_id\")) == \"\") | (lower(col(\"flight_id\")) == \"null\"),\n",
 					"         \"Invalid flight_id\")\n",
-					"    \n",
+					"\n",
 					"    .when(col(\"flight_no\").isNull() | (trim(col(\"flight_no\")) == \"\") | (lower(col(\"flight_no\")) == \"null\"),\n",
 					"         \"Invalid flight_no\")\n",
-					"    \n",
+					"\n",
 					"    .when(col(\"departure_time\").isNull() |\n",
 					"          (trim(col(\"departure_time\")) == \"\") |\n",
 					"          (lower(col(\"departure_time\")).isin(\"null\",\"undefined\")) |\n",
 					"          col(\"departure_ts\").isNull(),\n",
 					"         \"Invalid departure_time\")\n",
-					"    \n",
+					"\n",
 					"    .when(col(\"arrival_time\").isNull() |\n",
 					"          (trim(col(\"arrival_time\")) == \"\") |\n",
 					"          (lower(col(\"arrival_time\")).isin(\"null\",\"undefined\")) |\n",
@@ -201,52 +218,24 @@
 					"         \"Invalid arrival_time\")\n",
 					")\n",
 					"\n",
-					"# VALID RECORDS (add load_date)\n",
+					"# Split records\n",
 					"df_valid = df_with_error.filter(col(\"error_reason\").isNull()) \\\n",
-					"                        .drop(\"error_reason\",\"departure_ts\",\"arrival_ts\") \\\n",
+					"                        .drop(\"error_reason\") \\\n",
 					"                        .withColumn(\"load_date\", current_timestamp())\n",
 					"\n",
-					"# INVALID RECORDS (add load_date + error_reason)\n",
 					"df_invalid = df_with_error.filter(col(\"error_reason\").isNotNull()) \\\n",
-					"                          .drop(\"departure_ts\",\"arrival_ts\") \\\n",
 					"                          .withColumn(\"load_date\", current_timestamp())\n",
 					"\n",
-					"# Write valid records to Silver\n",
-					"df_valid.write \\\n",
-					"    .mode(\"overwrite\") \\\n",
-					"    .format(\"parquet\") \\\n",
-					"    .save(silver_path)\n",
+					"# Reduce partitions (avoids executor failures)\n",
+					"df_valid = df_valid.repartition(1)\n",
 					"\n",
-					"# Write invalid records to Bronze Error table\n",
-					"df_invalid.write \\\n",
-					"    .mode(\"append\") \\\n",
-					"    .format(\"parquet\") \\\n",
-					"    .save(bronze_error_path)"
+					"# Write valid records\n",
+					"df_valid.write.mode(\"overwrite\").format(\"parquet\").save(silver_path)\n",
+					"\n",
+					"# Write invalid records\n",
+					"df_invalid.write.mode(\"append\").format(\"parquet\").save(bronze_error_path)"
 				],
-				"execution_count": 41
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"collapsed": false
-				},
-				"source": [
-					"display(df_valid)"
-				],
-				"execution_count": 44
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					""
-				]
+				"execution_count": null
 			}
 		]
 	}
