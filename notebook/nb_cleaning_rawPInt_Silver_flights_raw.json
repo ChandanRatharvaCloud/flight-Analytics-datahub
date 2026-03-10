@@ -4,20 +4,20 @@
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
-			"referenceName": "sparkpool",
+			"referenceName": "DynSparkPool",
 			"type": "BigDataPoolReference"
 		},
 		"sessionProperties": {
-			"driverMemory": "28g",
-			"driverCores": 4,
-			"executorMemory": "28g",
-			"executorCores": 4,
-			"numExecutors": 2,
+			"driverMemory": "112g",
+			"driverCores": 16,
+			"executorMemory": "112g",
+			"executorCores": 16,
+			"numExecutors": 1,
 			"conf": {
-				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "2",
-				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "c144fec0-c027-4951-a4f2-274ce9f8b822"
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "4",
+				"spark.autotune.trackingId": "f88ce1bb-4854-46f2-9ed1-31856827526e"
 			}
 		},
 		"metadata": {
@@ -31,19 +31,19 @@
 				"name": "python"
 			},
 			"a365ComputeOptions": {
-				"id": "/subscriptions/16a3eefe-7a80-4357-b186-6221ffab82f1/resourceGroups/reg_datamart/providers/Microsoft.Synapse/workspaces/synapseanalyticsdevenv/bigDataPools/sparkpool",
-				"name": "sparkpool",
+				"id": "/subscriptions/16a3eefe-7a80-4357-b186-6221ffab82f1/resourceGroups/reg_datamart/providers/Microsoft.Synapse/workspaces/synapseanalyticsdevenv/bigDataPools/DynSparkPool",
+				"name": "DynSparkPool",
 				"type": "Spark",
-				"endpoint": "https://synapseanalyticsdevenv.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/sparkpool",
+				"endpoint": "https://synapseanalyticsdevenv.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/DynSparkPool",
 				"auth": {
 					"type": "AAD",
 					"authResource": "https://dev.azuresynapse.net"
 				},
-				"sparkVersion": "3.4",
+				"sparkVersion": "3.5",
 				"nodeCount": 10,
-				"cores": 4,
-				"memory": 28,
-				"automaticScaleJobs": false
+				"cores": 16,
+				"memory": 112,
+				"automaticScaleJobs": true
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -107,6 +107,13 @@
 				"source": [
 					""
 				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"a=1"
+				],
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
