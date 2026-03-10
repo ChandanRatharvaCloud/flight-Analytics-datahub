@@ -74,7 +74,6 @@
 						"value": "@activity('GetPreintigration').output.value",
 						"type": "Expression"
 					},
-					"isSequential": true,
 					"activities": [
 						{
 							"name": "Pre Intigration Notebook",
@@ -98,14 +97,14 @@
 								},
 								"snapshot": true,
 								"sparkPool": {
-									"referenceName": "newpool",
+									"referenceName": "sparkpool",
 									"type": "BigDataPoolReference"
 								},
-								"executorSize": "Large",
+								"executorSize": "Small",
 								"conf": {
 									"spark.dynamicAllocation.enabled": true
 								},
-								"driverSize": "Large"
+								"driverSize": "Small"
 							}
 						},
 						{
