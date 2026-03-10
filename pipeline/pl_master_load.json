@@ -97,17 +97,14 @@
 								},
 								"snapshot": true,
 								"sparkPool": {
-									"referenceName": {
-										"value": "@item().notebook_name",
-										"type": "Expression"
-									},
+									"referenceName": "max",
 									"type": "BigDataPoolReference"
 								},
-								"executorSize": "Small",
+								"executorSize": "Large",
 								"conf": {
 									"spark.dynamicAllocation.enabled": true
 								},
-								"driverSize": "Small"
+								"driverSize": "Large"
 							}
 						},
 						{
