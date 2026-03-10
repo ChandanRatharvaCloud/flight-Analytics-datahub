@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "95f46b0b-1e22-46d7-ba79-89a2db74e3b1"
+				"spark.autotune.trackingId": "f22017d6-771b-4552-85b4-d515a214537e"
 			}
 		},
 		"metadata": {
@@ -128,6 +128,9 @@
 			},
 			{
 				"cell_type": "code",
+				"metadata": {
+					"collapsed": false
+				},
 				"source": [
 					"from pyspark.sql.functions import *\n",
 					"from pyspark.sql.types import *\n",
@@ -139,9 +142,9 @@
 					"bronze_path = f\"abfss://{container}@{storage_account}.dfs.core.windows.net/staging/OnPremSQLServer/parquet/flights_raw.parquet\"\n",
 					"\n",
 					"df = spark.read.format(\"parquet\").load(bronze_path)\n",
-					"display(df)"
+					"# display(df)"
 				],
-				"execution_count": 1
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -235,7 +238,7 @@
 					"# Write invalid records\n",
 					"df_invalid.write.mode(\"overwrite\").format(\"parquet\").save(bronze_error_path)"
 				],
-				"execution_count": null
+				"execution_count": 3
 			}
 		]
 	}
