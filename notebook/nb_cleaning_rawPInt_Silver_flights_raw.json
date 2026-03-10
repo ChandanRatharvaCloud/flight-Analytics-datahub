@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "true",
 				"spark.dynamicAllocation.minExecutors": "1",
 				"spark.dynamicAllocation.maxExecutors": "4",
-				"spark.autotune.trackingId": "450830ff-3ab4-42a3-9f9c-d4b02d6c4ba3"
+				"spark.autotune.trackingId": "f57435bd-9761-455b-bb3f-4de90a2c0fbb"
 			}
 		},
 		"metadata": {
@@ -111,11 +111,9 @@
 			{
 				"cell_type": "code",
 				"source": [
-					"spark.conf.set(\"spark.executor.instances\",\"1\")\n",
-					"spark.conf.set(\"spark.executor.cores\",\"2\")\n",
-					"spark.conf.set(\"spark.executor.memory\",\"2g\")"
+					"a=1"
 				],
-				"execution_count": 6
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
