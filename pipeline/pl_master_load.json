@@ -42,7 +42,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT  * FROM [dbo].[notebookExecutionConfig]  where notebook_name = 'nb_clng_raw_PInt_Silver_booking_raw'",
+						"sqlReaderQuery": "SELECT  * FROM [dbo].[notebookExecutionConfig]  ",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -97,14 +97,14 @@
 								},
 								"snapshot": true,
 								"sparkPool": {
-									"referenceName": "sparkpool",
+									"referenceName": "DynSparkPool",
 									"type": "BigDataPoolReference"
 								},
-								"executorSize": "Small",
+								"executorSize": "Large",
 								"conf": {
 									"spark.dynamicAllocation.enabled": true
 								},
-								"driverSize": "Small"
+								"driverSize": "Large"
 							}
 						},
 						{
