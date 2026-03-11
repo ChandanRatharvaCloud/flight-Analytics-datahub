@@ -1,0 +1,132 @@
+{
+	"name": "LoadingDataToStg",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "sparkpool",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "aedd0331-fef5-47f5-88fe-7ab3e744ee1e"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/16a3eefe-7a80-4357-b186-6221ffab82f1/resourceGroups/reg_datamart/providers/Microsoft.Synapse/workspaces/synapseanalyticsdevenv/bigDataPools/sparkpool",
+				"name": "sparkpool",
+				"type": "Spark",
+				"endpoint": "https://synapseanalyticsdevenv.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/sparkpool",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.4",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"# -----------------------------------------\n",
+					"# 1. Imports\n",
+					"# -----------------------------------------\n",
+					"from pyspark.sql.functions import *\n",
+					"\n",
+					"# -----------------------------------------\n",
+					"# 2. ADLS Storage details\n",
+					"# -----------------------------------------\n",
+					"storage_account = \"sadevenvdatamart\"\n",
+					"container = \"adlsgen2\"\n",
+					"\n",
+					"flights_path = f\"abfss://{container}@{storage_account}.dfs.core.windows.net/preintegration/flights\"\n",
+					"booking_path = f\"abfss://{container}@{storage_account}.dfs.core.windows.net/preintegration/booking\"\n",
+					"\n",
+					"# -----------------------------------------\n",
+					"# 3. SQL Server connection details\n",
+					"# -----------------------------------------\n",
+					"server = \"sqlserver-datahub.database.windows.net\"\n",
+					"database = \"sqldb\"\n",
+					"username = \"sqladmin-datahub\"\n",
+					"password = \"Amma@143\"\n",
+					"\n",
+					"jdbc_url = f\"jdbc:sqlserver://{server}:1433;database={database};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30\"\n",
+					"\n",
+					"connection_properties = {\n",
+					"    \"user\": username,\n",
+					"    \"password\": password,\n",
+					"    \"driver\": \"com.microsoft.sqlserver.jdbc.SQLServerDriver\"\n",
+					"}\n",
+					"\n",
+					"# -----------------------------------------\n",
+					"# 4. Read Flights Data from ADLS\n",
+					"# -----------------------------------------\n",
+					"df_flights = spark.read.format(\"parquet\").load(flights_path)\n",
+					"\n",
+					"# -----------------------------------------\n",
+					"# 5. Read Booking Data from ADLS\n",
+					"# -----------------------------------------\n",
+					"df_booking = spark.read.format(\"parquet\").load(booking_path)\n",
+					"\n",
+					"# Optional preview\n",
+					"display(df_flights)\n",
+					"display(df_booking)\n",
+					"\n",
+					"# Reduce partitions to avoid SQL overload\n",
+					"df_flights = df_flights.repartition(1)\n",
+					"df_booking = df_booking.repartition(1)\n",
+					"\n",
+					"# -----------------------------------------\n",
+					"# 6. Write Flights → STG Table\n",
+					"# -----------------------------------------\n",
+					"df_flights.write \\\n",
+					"    .mode(\"overwrite\") \\\n",
+					"    .jdbc(\n",
+					"        url=jdbc_url,\n",
+					"        table=\"stg_flights\",\n",
+					"        properties=connection_properties\n",
+					"    )\n",
+					"\n",
+					"print(\"Flights loaded into STG table\")\n",
+					"\n",
+					"# -----------------------------------------\n",
+					"# 7. Write Booking → STG Table\n",
+					"# -----------------------------------------\n",
+					"df_booking.write \\\n",
+					"    .mode(\"overwrite\") \\\n",
+					"    .jdbc(\n",
+					"        url=jdbc_url,\n",
+					"        table=\"stg_booking\",\n",
+					"        properties=connection_properties\n",
+					"    )\n",
+					"\n",
+					"print(\"Booking loaded into STG table\")"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

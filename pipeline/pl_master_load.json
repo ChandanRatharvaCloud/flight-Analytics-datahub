@@ -97,14 +97,14 @@
 								},
 								"snapshot": true,
 								"sparkPool": {
-									"referenceName": "max",
+									"referenceName": "sparkpool",
 									"type": "BigDataPoolReference"
 								},
-								"executorSize": "XXLarge",
+								"executorSize": "Small",
 								"conf": {
 									"spark.dynamicAllocation.enabled": true
 								},
-								"driverSize": "XXLarge"
+								"driverSize": "Small"
 							}
 						},
 						{
@@ -154,8 +154,6 @@
 			{
 				"name": "Get List Of Stage Tables",
 				"type": "Lookup",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Run_PreIntigration_Parellel_NB",
@@ -193,8 +191,6 @@
 			{
 				"name": "STAGE TABLE CREATION",
 				"type": "ForEach",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Get List Of Stage Tables",

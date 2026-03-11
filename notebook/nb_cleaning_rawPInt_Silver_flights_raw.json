@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "d9fb1992-7fa5-4740-96b0-225dcda8b23d"
+				"spark.autotune.trackingId": "d8170c1e-3571-4536-9a1d-9d8196d1ce3c"
 			}
 		},
 		"metadata": {
@@ -113,7 +113,7 @@
 				"source": [
 					"a=1"
 				],
-				"execution_count": null
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -236,7 +236,7 @@
 					"\n",
 					"    mssparkutils.notebook.exit(\"FAILED: \" + str(e))"
 				],
-				"execution_count": 4
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -329,7 +329,89 @@
 					"\n",
 					"    mssparkutils.notebook.exit(\"FAILED: \" + str(e))"
 				],
-				"execution_count": 5
+				"execution_count": 3
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"collapsed": false
+				},
+				"source": [
+					"# -----------------------------------------\n",
+					"# 1. Imports\n",
+					"# -----------------------------------------\n",
+					"from pyspark.sql.functions import *\n",
+					"\n",
+					"# -----------------------------------------\n",
+					"# 2. ADLS Storage details\n",
+					"# -----------------------------------------\n",
+					"storage_account = \"sadevenvdatamart\"\n",
+					"container = \"adlsgen2\"\n",
+					"\n",
+					"flights_path = f\"abfss://{container}@{storage_account}.dfs.core.windows.net/preintegration/flights\"\n",
+					"booking_path = f\"abfss://{container}@{storage_account}.dfs.core.windows.net/preintegration/booking\"\n",
+					"\n",
+					"# -----------------------------------------\n",
+					"# 3. SQL Server connection details\n",
+					"# -----------------------------------------\n",
+					"server = \"sqlserver-datahub.database.windows.net\"\n",
+					"database = \"sqldb\"\n",
+					"username = \"sqladmin-datahub\"\n",
+					"password = \"Amma@143\"\n",
+					"\n",
+					"jdbc_url = f\"jdbc:sqlserver://{server}:1433;database={database};encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30\"\n",
+					"\n",
+					"connection_properties = {\n",
+					"    \"user\": username,\n",
+					"    \"password\": password,\n",
+					"    \"driver\": \"com.microsoft.sqlserver.jdbc.SQLServerDriver\"\n",
+					"}\n",
+					"\n",
+					"# -----------------------------------------\n",
+					"# 4. Read Flights Data from ADLS\n",
+					"# -----------------------------------------\n",
+					"df_flights = spark.read.format(\"parquet\").load(flights_path)\n",
+					"\n",
+					"# -----------------------------------------\n",
+					"# 5. Read Booking Data from ADLS\n",
+					"# -----------------------------------------\n",
+					"df_booking = spark.read.format(\"parquet\").load(booking_path)\n",
+					"\n",
+					"# Optional preview\n",
+					"display(df_flights)\n",
+					"display(df_booking)\n",
+					"\n",
+					"# Reduce partitions to avoid SQL overload\n",
+					"df_flights = df_flights.repartition(1)\n",
+					"df_booking = df_booking.repartition(1)\n",
+					"\n",
+					"# -----------------------------------------\n",
+					"# 6. Write Flights → STG Table\n",
+					"# -----------------------------------------\n",
+					"df_flights.write \\\n",
+					"    .mode(\"overwrite\") \\\n",
+					"    .jdbc(\n",
+					"        url=jdbc_url,\n",
+					"        table=\"stg_flights\",\n",
+					"        properties=connection_properties\n",
+					"    )\n",
+					"\n",
+					"print(\"Flights loaded into STG table\")\n",
+					"\n",
+					"# -----------------------------------------\n",
+					"# 7. Write Booking → STG Table\n",
+					"# -----------------------------------------\n",
+					"df_booking.write \\\n",
+					"    .mode(\"overwrite\") \\\n",
+					"    .jdbc(\n",
+					"        url=jdbc_url,\n",
+					"        table=\"stg_booking\",\n",
+					"        properties=connection_properties\n",
+					"    )\n",
+					"\n",
+					"print(\"Booking loaded into STG table\")"
+				],
+				"execution_count": 6
 			}
 		]
 	}
