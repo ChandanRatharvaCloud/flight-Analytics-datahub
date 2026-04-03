@@ -5,17 +5,13 @@
 		"annotations": [],
 		"type": "AzureSqlDatabase",
 		"typeProperties": {
-			"server": "adfprj.database.windows.net",
-			"database": "[B5_CTECH]",
+			"server": "sqldevenv.database.windows.net",
+			"database": "azure_sqldb",
 			"encrypt": "mandatory",
 			"trustServerCertificate": false,
 			"authenticationType": "SQL",
-			"userName": "adfprj",
-			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDlBOTM5Rjk4LTZEMEYtNDFBMi04RjUwLTY3RDU0MjRBRTlCMl9kNTcyYTMyNC02NDY2LTQ5ZGItYjdlYy05MWU3NWE1ZjE3YmUiDQp9"
-		},
-		"connectVia": {
-			"referenceName": "AutoResolveIntegrationRuntime",
-			"type": "IntegrationRuntimeReference"
+			"userName": "sqladmindevenv",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDg1OTFEMjUyLTY0NkYtNDEwOC05RTkwLTQwMzJDOTQxRTFBNV8wNjEwMGMwOC03ZmNjLTRmOTctODI1Zi1mNzVlOWQ3OTBiZDIiDQp9"
 		}
 	}
 }
