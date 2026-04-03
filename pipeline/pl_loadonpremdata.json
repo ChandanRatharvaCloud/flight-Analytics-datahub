@@ -52,6 +52,10 @@
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
+								"expression": {
+									"value": "@equals(item().Load_Type,'incremental')",
+									"type": "Expression"
+								},
 								"ifFalseActivities": [
 									{
 										"name": "Copy data2",
