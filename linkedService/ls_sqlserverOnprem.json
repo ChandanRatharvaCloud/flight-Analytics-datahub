@@ -7,10 +7,6 @@
 		"typeProperties": {
 			"connectionString": "integrated security=False;data source=SATHYA\\MSSQLSERVER02;initial catalog=B5_CTECH;user id=adf_user",
 			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI3OGFiOGNhMi1jNmUwLTQ4NWItYTY0Zi04ZjFhZTNmZWVhOGUiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
-		},
-		"connectVia": {
-			"referenceName": "project-integration-runtime",
-			"type": "IntegrationRuntimeReference"
 		}
 	}
 }

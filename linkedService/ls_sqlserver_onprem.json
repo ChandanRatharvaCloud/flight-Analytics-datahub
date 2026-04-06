@@ -8,10 +8,6 @@
 			"connectionString": "integrated security=True;data source=DESKTOP-ENP9FNL\\MSSQLSERVER01;initial catalog=B5_CTECH",
 			"userName": "DESKTOP-ENP9FNL\\Nethish",
 			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJjN2Y5OTQ1OS01NzI4LTQ1OWEtYjFlNi0wZDM5ZTRmYzY2M2EiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
-		},
-		"connectVia": {
-			"referenceName": "integrationruntime1",
-			"type": "IntegrationRuntimeReference"
 		}
 	}
 }
