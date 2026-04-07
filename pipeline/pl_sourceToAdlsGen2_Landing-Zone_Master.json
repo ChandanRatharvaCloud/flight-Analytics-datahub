@@ -185,15 +185,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"notebook": {
-						"referenceName": "ConverstingJsonToParquet",
-						"type": "NotebookReference"
-					},
 					"snapshot": true,
-					"sparkPool": {
-						"referenceName": "sparkpool",
-						"type": "BigDataPoolReference"
-					},
 					"conf": {
 						"spark.dynamicAllocation.enabled": null,
 						"spark.dynamicAllocation.minExecutors": null,
@@ -276,7 +268,7 @@
 					},
 					"enableLogging": true,
 					"storeSettings": {
-						"type": "AzureBlobStorageReadSettings",
+						"type": "AzureBlobFSReadSettings",
 						"recursive": true,
 						"wildcardFileName": "*.json",
 						"enablePartitionDiscovery": false
