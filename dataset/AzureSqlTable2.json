@@ -1,0 +1,46 @@
+{
+	"name": "AzureSqlTable2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "flight_id",
+				"type": "varchar"
+			},
+			{
+				"name": "flight_no",
+				"type": "varchar"
+			},
+			{
+				"name": "departure_airport",
+				"type": "varchar"
+			},
+			{
+				"name": "arrival_airport",
+				"type": "varchar"
+			},
+			{
+				"name": "departure_time",
+				"type": "varchar"
+			},
+			{
+				"name": "arrival_time",
+				"type": "varchar"
+			},
+			{
+				"name": "aircraft_code",
+				"type": "varchar"
+			},
+			{
+				"name": "status",
+				"type": "varchar"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

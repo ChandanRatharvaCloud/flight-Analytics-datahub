@@ -1,0 +1,9 @@
+{
+	"name": "flightproject",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "46b654dd-0d40-4fa4-8018-09ca6d70b126",
+		"tenantId": "85ca7c1a-aec9-40ed-9f45-d6da65b5e54d"
+	}
+}

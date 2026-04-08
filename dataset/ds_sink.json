@@ -2,11 +2,14 @@
 	"name": "ds_sink",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "ds_sink_load",
+			"referenceName": "ls_sink_load",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"tablename": {
+			"Schema": {
+				"type": "string"
+			},
+			"Tablename": {
 				"type": "string"
 			}
 		},
@@ -15,7 +18,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"container": "landing-zone"
+				"container": "flightproject"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
