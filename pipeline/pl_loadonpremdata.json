@@ -178,11 +178,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"source": {
-												"type": "SqlServerSource",
-												"sqlReaderQuery": {
-													"value": "@concat('Select * from ' ,item().Source_Object_Schema,'.',item().Source_Object_Name,' where ',item().watermark_column,'>',item().watermark_value)",
-													"type": "Expression"
-												},
+												"type": "AzureSqlSource",
 												"queryTimeout": "02:00:00",
 												"partitionOption": "None"
 											},
@@ -209,18 +205,8 @@
 										},
 										"inputs": [
 											{
-												"referenceName": "onprem_dataset",
-												"type": "DatasetReference",
-												"parameters": {
-													"schemaname": {
-														"value": "@item().Source_Object_Schema",
-														"type": "Expression"
-													},
-													"tablename": {
-														"value": "@item().Source_Object_Name",
-														"type": "Expression"
-													}
-												}
+												"referenceName": "ls_onprem",
+												"type": "DatasetReference"
 											}
 										],
 										"outputs": [

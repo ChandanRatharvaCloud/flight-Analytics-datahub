@@ -19,7 +19,7 @@
 					"value": "@dataset().tablename",
 					"type": "Expression"
 				},
-				"fileSystem": "landingzone"
+				"fileSystem": "bronze"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
