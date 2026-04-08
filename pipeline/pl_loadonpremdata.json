@@ -114,11 +114,8 @@
 										],
 										"outputs": [
 											{
-												"referenceName": "ds_sink_load",
-												"type": "DatasetReference",
-												"parameters": {
-													"tablename": "@concat(item().Target_Object_Name,'.csv')"
-												}
+												"referenceName": "ds_sink1",
+												"type": "DatasetReference"
 											}
 										]
 									}
@@ -225,14 +222,8 @@
 										],
 										"outputs": [
 											{
-												"referenceName": "ds_sink_load",
-												"type": "DatasetReference",
-												"parameters": {
-													"tablename": {
-														"value": "@concat(item().Target_Object_Name,'.csv')",
-														"type": "Expression"
-													}
-												}
+												"referenceName": "ds_sink1",
+												"type": "DatasetReference"
 											}
 										]
 									}
