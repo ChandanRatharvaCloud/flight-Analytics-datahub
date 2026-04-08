@@ -115,7 +115,7 @@
 												"referenceName": "ds_sink",
 												"type": "DatasetReference",
 												"parameters": {
-													"tablename": "@concat(item().source_object_name,'.csv')"
+													"Tablename": "@concat(item().source_object_name,'.csv')"
 												}
 											}
 										]
@@ -216,7 +216,7 @@
 												"referenceName": "ds_sink",
 												"type": "DatasetReference",
 												"parameters": {
-													"tablename": "@concat('Select * from ' ,item().Source_Object_Schema,'.',item().Source_Object_Name,' where ',item().watermark_column,'>',item().watermark_value)"
+													"Tablename": "@concat('Select * from ' ,item().Source_Object_Schema,'.',item().Source_Object_Name,' where ',item().watermark_column,'>',item().watermark_value)"
 												}
 											}
 										]
